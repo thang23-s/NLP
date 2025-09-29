@@ -1,88 +1,96 @@
-SemanticCacheRAG
-1. Giới thiệu 
-Dự án này là một phiên bản triển khai thực tế của hệ thống Semantic Caching được đề xuất trong bài báo khoa học: "Semantic Caching of Contextual Summaries for Efficient Question-Answering with Language Models".
+# 🚀 Semantic Cache RAG: Efficient Question-Answering System
 
-Mục tiêu chính là xây dựng một hệ thống Hỏi-Đáp (Question-Answering) thông minh, có khả năng giảm thiểu độ trễ và chi phí tính toán bằng cách tránh các lệnh gọi dư thừa đến Mô hình Ngôn ngữ Lớn (LLM).
+---
 
-Hệ thống hoạt động dựa trên nguyên tắc "cache-first": kiểm tra một bộ nhớ cache ngữ nghĩa được xây dựng trên Redis trước khi thực hiện quy trình RAG (Retrieval-Augmented Generation) đầy đủ.
+## 1. Introduction
 
-Link bài báo gốc: https://arxiv.org/pdf/2505.11271
+This project is a practical implementation of the **Semantic Caching** system proposed in the scientific paper: "Semantic Caching of Contextual Summaries for Efficient Question-Answering with Language Models."
 
-2. Công nghệ được sử dụng
-Hệ thống được xây dựng từ các thành phần hiện đại và mạnh mẽ:
+The main goal is to build an intelligent **Question-Answering (QA)** system capable of **minimizing latency and computational costs** by preventing redundant calls to the Large Language Model (LLM).
 
-Giao diện Người dùng: Streamlit
+The system operates on a **"cache-first"** principle: it checks a **semantic cache** built on **Redis** before executing the full **RAG (Retrieval-Augmented Generation)** pipeline.
 
-Bộ não AI (LLM): Google Gemini
+**[Original Paper Link](https://arxiv.org/pdf/2505.11271)**
 
-Bộ nhớ Cache Ngữ nghĩa: Redis (với module RediSearch)
+---
 
-Bộ khung Kết nối: LangChain
+## 2. Key Features
 
-Mô hình Embedding: all-MiniLM-L6-v2
+### Cache-First Logic
+* **Semantic Cache:** Stores question-context-answer pairs in a **Redis Hash** for fast reuse.
+* **Vector Search:** Utilizes the **RediSearch** module to create vector indexes, allowing search for **semantically similar** questions rather than exact keyword matches.
 
-Triển khai: Docker
+### Core QA Capabilities
+* **RAG Mode:** Enables in-depth question-answering based on the content of an uploaded **PDF document**.
+* **General Chatbot Mode:** Allows conventional conversation leveraging the LLM's general knowledge base while simultaneously populating and utilizing the semantic cache.
 
-3. Các tính năng chính 
-Cache Ngữ nghĩa: Lưu trữ các cặp câu hỏi, bản tóm tắt theo ngữ cảnh, và câu trả lời cuối cùng vào Redis Hash để tái sử dụng.
+### Technology Stack
+* **Embedding Support:** Uses the high-performance **all-MiniLM-L6-v2** model (384 dimensions) to generate semantic vectors for questions.
+* **Docker Deployment:** The entire system, including Redis, is easily launched with a single `docker-compose up` command.
 
-Tìm kiếm Vector: Sử dụng RediSearch để tạo chỉ mục vector, cho phép tìm kiếm các câu hỏi tương tự dựa trên ý nghĩa (semantic similarity) thay vì từ khóa.
+---
 
-Hỗ trợ Embedding: Sử dụng mô hình all-MiniLM-L6-v2 (384 chiều) để tạo vector ngữ nghĩa cho các câu hỏi.
+## 3. Technology Stack
 
-Hai chế độ hoạt động:
+The system is built using modern and robust components:
 
-Chế độ RAG: Hỏi-đáp chuyên sâu dựa trên nội dung của một tài liệu PDF được tải lên.
+| Component | Technology | Role |
+| :--- | :--- | :--- |
+| **LLM Brain** | **Google Gemini** | The core model for generation and reasoning. |
+| **Semantic Cache** | **Redis** (with RediSearch) | High-speed memory store and vector index for semantic similarity search. |
+| **Integration Framework** | **LangChain** | Orchestrates the RAG, Caching, and LLM connection pipelines. |
+| **Embedding Model** | **all-MiniLM-L6-v2** | Generates 384-dimensional vector representations. |
+| **User Interface** | **Streamlit** | Provides the interactive web interface for file upload and chat. |
+| **Deployment** | **Docker** | Ensures easy, portable, and reproducible setup. |
 
-Chế độ Chatbot chung: Trò chuyện thông thường dựa trên kiến thức của Gemini, đồng thời vẫn tận dụng và làm giàu cho cache.
+---
 
-Triển khai với Docker: Toàn bộ hệ thống, bao gồm cả Redis, có thể được khởi chạy dễ dàng bằng một lệnh docker-compose.
+## 4. Getting Started: Setup and Installation
 
-4. Hướng dẫn
-Yêu cầu hệ thống
-Docker và Docker Compose
+### System Requirements
+* **Docker** and **Docker Compose**
+* **Python 3.10+**
+* A **Google Gemini API Key**
 
-Python 3.10+
+### Installation Steps
 
-Một API Key của Google Gemini
+1.  **Clone the repository:**
+    ```bash
+    git clone [URL_CUA_REPO_CUA_BAN]
+    cd [TEN_REPO_CUA_BAN]
+    ```
 
-Các bước cài đặt
-Clone repository này:
+2.  **Create a virtual environment and install libraries:**
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate  # Use .\venv\Scripts\activate on Windows
+    pip install -r requirements.txt
+    ```
 
-git clone [URL_CUA_REPO_CUA_BAN]
-cd [TEN_REPO_CUA_BAN]
+3.  **Configure API Key:**
+    * Create a file named **`.env`** in the root directory.
+    * Add your API key inside the file as follows:
+    ```
+    MY_GEMINI_API_KEY="..................."
+    ```
 
-Tạo môi trường ảo và cài đặt các thư viện:
+4.  **Launch the system with Docker:**
+    * Ensure **Docker Desktop** is running.
+    * Run the following command to start both the **Redis** container and the **Streamlit** application:
+    ```bash
+    docker-compose up --build
+    ```
 
-python -m venv .venv
-source .venv/bin/activate  
-pip install -r requirements.txt
+---
 
-Cấu hình API Key:
+## 5. Usage Guide
 
-Tạo một file có tên là .env.
+Once the system is running via `docker-compose`, access the Streamlit interface in your web browser (usually at `http://localhost:8501`).
 
-Thêm vào đó API key của bạn như sau:
+### Chatbot Mode (Default)
+* You can immediately start chatting. All questions and corresponding answers will be automatically stored in the semantic cache.
 
-MY_GEMINI_API_KEY="..................."
-
-Khởi chạy hệ thống với Docker:
-
-Đảm bảo Docker Desktop đang chạy.
-
-Chạy lệnh sau để khởi động Redis và Streamlit:
-
-docker-compose up --build
-
-
-
-5. Cách sử dụng
-Chế độ Chatbot: Ngay khi khởi động, bạn có thể bắt đầu trò chuyện. Các câu hỏi và câu trả lời sẽ tự động được lưu vào cache.
-
-Chế độ RAG:
-
-Sử dụng thanh bên trái (sidebar) để tải lên một file PDF.
-
-Nhấn nút "Xử lý tài liệu".
-
-Sau khi xử lý xong, bạn có thể bắt đầu đặt các câu hỏi liên quan đến nội dung của file PDF.
+### RAG Mode (Document-Specific QA)
+1.  **Upload Document:** Use the left sidebar to upload a **PDF file**.
+2.  **Process:** Click the **"Xử lý tài liệu"** (Process Document) button.
+3.  **Query:** Once processing is complete, you can begin asking questions specifically related to the content of the uploaded PDF file.
